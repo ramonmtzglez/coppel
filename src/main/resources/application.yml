@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: tvmaze-middleware
+  jackson:
+    default-property-inclusion: non_null
+
+server:
+  port: 8080
+
+tvmaze:
+  base-url: https://api.tvmaze.com
+
+logging:
+  level:
+    com.tvmaze.middleware: INFO
