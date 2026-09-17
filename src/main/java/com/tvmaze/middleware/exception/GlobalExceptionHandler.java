@@ -15,6 +15,12 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(ShowNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleShowNotFound(
+            ShowNotFoundException ex, HttpServletRequest request) {
+        return build(HttpStatus.NOT_FOUND, "Show no encontrado", ex.getMessage(), request);
+    }
+
     @ExceptionHandler(WebClientResponseException.NotFound.class)
     public ResponseEntity<ErrorResponse> handleNotFound(
             WebClientResponseException.NotFound ex, HttpServletRequest request) {

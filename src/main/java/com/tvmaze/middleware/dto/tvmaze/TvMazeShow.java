@@ -4,10 +4,20 @@ import java.util.List;
 
 public record TvMazeShow(
         Long id,
+        String url,
         String name,
+        String type,
+        String language,
         List<String> genres,
-        String summary,
+        String status,
+        Integer runtime,
+        String premiered,
+        String ended,
+        String officialSite,
+        TvMazeRating rating,
         TvMazeNetwork network,
-        TvMazeWebChannel webChannel
+        TvMazeWebChannel webChannel,
+        TvMazeImage image,
+        String summary
 ) {
 }

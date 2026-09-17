@@ -1,6 +1,7 @@
 package com.tvmaze.middleware.client;
 
 import com.tvmaze.middleware.dto.tvmaze.TvMazeSearchItem;
+import com.tvmaze.middleware.dto.tvmaze.TvMazeShow;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -28,5 +29,13 @@ public class TvMazeClient {
                         .collectList()
                         .block()
         ).orElse(List.of());
+    }
+
+    public TvMazeShow getShow(Long id) {
+        return webClient.get()
+                .uri("/shows/{id}", id)
+                .retrieve()
+                .bodyToMono(TvMazeShow.class)
+                .block();
     }
 }
