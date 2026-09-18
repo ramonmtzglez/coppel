@@ -16,6 +16,7 @@ public record ShowDetailResponse(
         String image,
         String language,
         String officialSite,
-        String url
+        String url,
+        List<CommentDto> comments
 ) {
 }

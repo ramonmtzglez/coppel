@@ -3,6 +3,7 @@ package com.tvmaze.middleware.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tvmaze.middleware.client.TvMazeClient;
 import com.tvmaze.middleware.document.ShowDocument;
+import com.tvmaze.middleware.dto.CommentDto;
 import com.tvmaze.middleware.dto.ShowDetailResponse;
 import com.tvmaze.middleware.dto.ShowResponse;
 import com.tvmaze.middleware.dto.tvmaze.TvMazeImage;
@@ -21,6 +22,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,18 +42,23 @@ class ShowServiceImplTest {
     @Mock
     private ShowRepository showRepository;
 
+    @Mock
+    private CommentService commentService;
+
     private ShowServiceImpl service;
 
     @BeforeEach
     void setUp() {
-        service = new ShowServiceImpl(tvMazeClient, showRepository, new ObjectMapper());
+        service = new ShowServiceImpl(tvMazeClient, showRepository, commentService, new ObjectMapper());
     }
 
     @Test
-    void search_mapsTvMazeResultsToResponse() {
+    void search_mapsTvMazeResultsToResponseWithComments() {
         TvMazeShow show = sampleShow();
         when(tvMazeClient.searchShows("girls"))
                 .thenReturn(List.of(new TvMazeSearchItem(0.9, show)));
+        when(commentService.findByShowIds(any()))
+                .thenReturn(Map.of(1L, List.of(new CommentDto("Excelente", 5))));
 
         List<ShowResponse> result = service.search("girls");
 
@@ -61,17 +68,20 @@ class ShowServiceImplTest {
         assertThat(first.name()).isEqualTo("Under the Dome");
         assertThat(first.channel()).isEqualTo("CBS");
         assertThat(first.genres()).containsExactly("Drama", "Science-Fiction", "Thriller");
+        assertThat(first.comments()).containsExactly(new CommentDto("Excelente", 5));
     }
 
     @Test
-    void getShow_returnsCachedWhenPresent() {
+    void getShow_returnsCachedWithComments() {
         ShowDocument doc = ShowDocument.builder().id(1L).name("Under the Dome").build();
         when(showRepository.findById(1L)).thenReturn(Optional.of(doc));
+        when(commentService.findByShowId(1L)).thenReturn(List.of(new CommentDto("Buenisima", 4)));
 
         ShowDetailResponse result = service.getShow(1L);
 
         assertThat(result.id()).isEqualTo(1L);
         assertThat(result.name()).isEqualTo("Under the Dome");
+        assertThat(result.comments()).containsExactly(new CommentDto("Buenisima", 4));
         verify(tvMazeClient, never()).getShow(anyLong());
         verify(showRepository, never()).save(any());
     }
@@ -80,11 +90,13 @@ class ShowServiceImplTest {
     void getShow_fetchesAndCachesOnMiss() {
         when(showRepository.findById(1L)).thenReturn(Optional.empty());
         when(tvMazeClient.getShow(1L)).thenReturn(sampleShow());
+        when(commentService.findByShowId(1L)).thenReturn(List.of());
 
         ShowDetailResponse result = service.getShow(1L);
 
         assertThat(result.id()).isEqualTo(1L);
         assertThat(result.rating()).isEqualTo(6.6);
+        assertThat(result.comments()).isEmpty();
         verify(showRepository).save(any(ShowDocument.class));
     }
 

@@ -1,6 +1,7 @@
 package com.tvmaze.middleware.mapper;
 
 import com.tvmaze.middleware.document.CommentDocument;
+import com.tvmaze.middleware.dto.CommentDto;
 import com.tvmaze.middleware.dto.CommentResponse;
 
 public final class CommentMapper {
@@ -16,5 +17,9 @@ public final class CommentMapper {
                 doc.getRating(),
                 doc.getCreatedAt()
         );
+    }
+
+    public static CommentDto toDto(CommentDocument doc) {
+        return new CommentDto(doc.getComment(), doc.getRating());
     }
 }

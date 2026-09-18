@@ -7,6 +7,7 @@ public record ShowResponse(
         String name,
         String channel,
         String summary,
-        List<String> genres
+        List<String> genres,
+        List<CommentDto> comments
 ) {
 }

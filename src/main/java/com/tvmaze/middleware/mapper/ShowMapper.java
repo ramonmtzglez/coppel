@@ -1,28 +1,31 @@
 package com.tvmaze.middleware.mapper;
 
 import com.tvmaze.middleware.document.ShowDocument;
+import com.tvmaze.middleware.dto.CommentDto;
 import com.tvmaze.middleware.dto.ShowDetailResponse;
 import com.tvmaze.middleware.dto.ShowResponse;
 import com.tvmaze.middleware.dto.tvmaze.TvMazeShow;
 
 import java.time.Instant;
+import java.util.List;
 
 public final class ShowMapper {
 
     private ShowMapper() {
     }
 
-    public static ShowResponse toResponse(TvMazeShow show) {
+    public static ShowResponse toResponse(TvMazeShow show, List<CommentDto> comments) {
         return new ShowResponse(
                 show.id(),
                 show.name(),
                 resolveChannel(show),
                 show.summary(),
-                show.genres()
+                show.genres(),
+                comments
         );
     }
 
-    public static ShowDetailResponse toDetailResponse(TvMazeShow show) {
+    public static ShowDetailResponse toDetailResponse(TvMazeShow show, List<CommentDto> comments) {
         return new ShowDetailResponse(
                 show.id(),
                 show.name(),
@@ -37,7 +40,8 @@ public final class ShowMapper {
                 show.image() != null ? show.image().original() : null,
                 show.language(),
                 show.officialSite(),
-                show.url()
+                show.url(),
+                comments
         );
     }
 
@@ -61,7 +65,7 @@ public final class ShowMapper {
                 .build();
     }
 
-    public static ShowDetailResponse toDetailResponse(ShowDocument doc) {
+    public static ShowDetailResponse toDetailResponse(ShowDocument doc, List<CommentDto> comments) {
         return new ShowDetailResponse(
                 doc.getId(),
                 doc.getName(),
@@ -76,7 +80,8 @@ public final class ShowMapper {
                 doc.getImage(),
                 doc.getLanguage(),
                 doc.getOfficialSite(),
-                doc.getUrl()
+                doc.getUrl(),
+                comments
         );
     }
 
