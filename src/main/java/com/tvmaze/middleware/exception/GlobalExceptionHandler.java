@@ -27,6 +27,14 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.NOT_FOUND, "No se encontro el recurso", ex.getMessage(), request);
     }
 
+    @ExceptionHandler(WebClientResponseException.TooManyRequests.class)
+    public ResponseEntity<ErrorResponse> handleTooManyRequests(
+            WebClientResponseException.TooManyRequests ex, HttpServletRequest request) {
+        return build(HttpStatus.TOO_MANY_REQUESTS,
+                "Demasiadas solicitudes",
+                "El proveedor TV Maze alcanzó su límite de peticiones", request);
+    }
+
     @ExceptionHandler(WebClientResponseException.class)
     public ResponseEntity<ErrorResponse> handleUpstream(
             WebClientResponseException ex, HttpServletRequest request) {
