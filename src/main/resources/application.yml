@@ -1,6 +1,10 @@
 spring:
   application:
     name: tvmaze-middleware
+  data:
+    mongodb:
+      # Atlas: mongodb+srv://<USUARIO>:<PASSWORD>@<CLUSTER>/<DATABASE>?retryWrites=true&w=majority
+      uri: ${MONGODB_URI:mongodb://localhost:27017/tvmaze_middleware}
   jackson:
     default-property-inclusion: non_null
 
