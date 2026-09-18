@@ -37,6 +37,6 @@ public class ShowDocument {
     private String officialSite;
     private String url;
 
-    @Indexed(name = "cachedAt_ttl", expireAfter = "1d")
+    @Indexed(name = "cachedAt_ttl", expireAfter = "1h")
     private Instant cachedAt;
 }
