@@ -1,8 +1,11 @@
 package com.tvmaze.middleware.mapper;
 
+import com.tvmaze.middleware.document.ShowDocument;
 import com.tvmaze.middleware.dto.ShowDetailResponse;
 import com.tvmaze.middleware.dto.ShowResponse;
 import com.tvmaze.middleware.dto.tvmaze.TvMazeShow;
+
+import java.time.Instant;
 
 public final class ShowMapper {
 
@@ -35,6 +38,45 @@ public final class ShowMapper {
                 show.language(),
                 show.officialSite(),
                 show.url()
+        );
+    }
+
+    public static ShowDocument toDocument(TvMazeShow show) {
+        return ShowDocument.builder()
+                .id(show.id())
+                .name(show.name())
+                .channel(resolveChannel(show))
+                .summary(show.summary())
+                .genres(show.genres())
+                .status(show.status())
+                .runtime(show.runtime())
+                .premiered(show.premiered())
+                .ended(show.ended())
+                .rating(show.rating() != null ? show.rating().average() : null)
+                .image(show.image() != null ? show.image().original() : null)
+                .language(show.language())
+                .officialSite(show.officialSite())
+                .url(show.url())
+                .cachedAt(Instant.now())
+                .build();
+    }
+
+    public static ShowDetailResponse toDetailResponse(ShowDocument doc) {
+        return new ShowDetailResponse(
+                doc.getId(),
+                doc.getName(),
+                doc.getChannel(),
+                doc.getSummary(),
+                doc.getGenres(),
+                doc.getStatus(),
+                doc.getRuntime(),
+                doc.getPremiered(),
+                doc.getEnded(),
+                doc.getRating(),
+                doc.getImage(),
+                doc.getLanguage(),
+                doc.getOfficialSite(),
+                doc.getUrl()
         );
     }
 
